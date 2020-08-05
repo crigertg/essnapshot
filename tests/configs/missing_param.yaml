@@ -1,0 +1,8 @@
+---
+repository:
+  type: 'fs'
+  settings:
+    location: '/mnt/snapshot'
+    compress: 'true'
+# retention time of 1 hour
+retention_time: '1h'
