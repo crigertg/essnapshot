@@ -28,7 +28,8 @@ def wait_for_running_snapshots():
         sleep(1)
 
 
-esclient = es.initialize_es_client()
+esconfig = config['es_connections'] if 'es_connections' in config else None
+esclient = es.initialize_es_client(esconfig)
 es.connection_check(esclient)
 es.ensure_snapshot_repo(
     esclient,

@@ -3,9 +3,9 @@ from elasticsearch import Elasticsearch, NotFoundError
 from elasticsearch import TransportError, ConnectionError
 
 
-def initialize_es_client():
+def initialize_es_client(es_connections: list):
     """initialize an instance of the ES client and return it."""
-    return Elasticsearch()
+    return Elasticsearch(es_connections)
 
 
 def connection_check(esclient):
