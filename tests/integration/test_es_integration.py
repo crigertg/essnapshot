@@ -2,6 +2,7 @@ import pytest
 from elasticsearch import Elasticsearch
 from essnapshot.es import connection_check, ensure_snapshot_repo
 from essnapshot.es import create_snapshot, get_snapshots, delete_snapshots
+from essnapshot.es import initialize_es_client
 from essnapshot.helpers import open_configfile
 from time import sleep
 
@@ -22,6 +23,12 @@ def es_service(docker_ip, docker_services):
         timeout=60.0, pause=1.0, check=lambda: is_responsive()
     )
     return open_configfile('tests/configs/integration.yaml')
+
+
+@pytest.mark.integration_test
+def test_initialize_es_client(es_service):
+    testclient = initialize_es_client(es_service['es_connections'])
+    assert testclient.ping()
 
 
 @pytest.mark.integration_test

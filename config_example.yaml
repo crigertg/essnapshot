@@ -1,4 +1,10 @@
 ---
+# list(array) of hashes(dictionary) with ES nodes
+# see https://elasticsearch-py.readthedocs.io/en/master/api.html#elasticsearch
+# for available options see https://elasticsearch-py.readthedocs.io/en/master/connection.html#elasticsearch.Urllib3HttpConnection
+es_connections:
+  - host: 'localhost'
+    port: 9200
 repository_name: 'essnapshot'
 # the hash must represent the JSON body sent to ES
 # see https://www.elastic.co/guide/en/elasticsearch/reference/current/snapshots-register-repository.html
