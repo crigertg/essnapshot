@@ -63,7 +63,7 @@ def get_snapshots(esclient, repository_name: str):
 def delete_snapshots(esclient, repository_name: str, snapshots: list):
     """Deletes all snapshots in a list in the given repository."""
     delete_return = esclient.snapshot.delete(
-        repository='test',
+        repository=repository_name,
         snapshot=snapshots)
     if not ('acknowledged' in delete_return and delete_return['acknowledged']):
         raise Exception("Delete of {s} failed.".format(s=snapshots))
