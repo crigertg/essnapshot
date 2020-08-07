@@ -2,7 +2,7 @@ import sys
 import re
 import yaml
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 def time_in_seconds(time_string: str):
@@ -60,7 +60,7 @@ def open_configfile(filepath):
 
 
 def snapshot_name():
-    snapshot_timestamp = datetime.now()
+    snapshot_timestamp = datetime.utcnow()
     timestamp_string = snapshot_timestamp.strftime("%Y-%m-%d_%H-%M-%S")
     snapshot_name = "essnapshot_{d}".format(d=timestamp_string)
     return snapshot_name
@@ -77,10 +77,11 @@ def check_snapshots_in_progress(snapshots: list):
 def find_delete_eligible_snapshots(
         snapshots: list,
         retention_time: str,
-        from_time=datetime.now()):
+        from_time=datetime.utcnow()):
     delete_eligible_snapshots = []
     for snapshot in snapshots:
-        snapshot_timestamp = datetime.fromtimestamp(int(snapshot['end_epoch']))
+        snapshot_timestamp = datetime.fromtimestamp(int(snapshot['end_epoch']),
+                                                    tz=timezone.utc)
         snapshot_age_seconds = (from_time - snapshot_timestamp).total_seconds()
         if int(snapshot_age_seconds) > time_in_seconds(retention_time):
             delete_eligible_snapshots.append(snapshot['id'])
