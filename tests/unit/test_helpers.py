@@ -1,7 +1,7 @@
 from essnapshot.helpers import time_in_seconds, open_configfile
 from essnapshot.helpers import snapshot_name, check_snapshots_in_progress
 from essnapshot.helpers import find_delete_eligible_snapshots
-from datetime import datetime
+from datetime import datetime, timezone
 import pytest
 import re
 
@@ -10,7 +10,7 @@ import re
 def es_snapshot_list_progress():
     return [
         {
-            "id": "essnapshot_2020-08-05_13-24-34",
+            "id": "essnapshot_2020-08-05_11-24-34",
             "status": "SUCCESS",
             "start_epoch": "1596626674",
             "start_time": "11:24:34",
@@ -23,7 +23,7 @@ def es_snapshot_list_progress():
             "total_shards": "0"
         },
         {
-            "id": "essnapshot_2020-08-05_13-24-48",
+            "id": "essnapshot_2020-08-05_11-24-48",
             "status": "IN_PROGRESS",
             "start_epoch": "1596626688",
             "start_time": "11:24:48",
@@ -42,7 +42,7 @@ def es_snapshot_list_progress():
 def es_snapshot_list():
     return [
         {
-            "id": "essnapshot_2020-08-05_13-24-34",
+            "id": "essnapshot_2020-08-05_11-24-34",
             "status": "SUCCESS",
             "start_epoch": "1596626674",
             "start_time": "11:24:34",
@@ -55,7 +55,7 @@ def es_snapshot_list():
             "total_shards": "0"
         },
         {
-            "id": "essnapshot_2020-08-05_13-24-48",
+            "id": "essnapshot_2020-08-05_11-24-48",
             "status": "SUCCESS",
             "start_epoch": "1596626688",
             "start_time": "11:24:48",
@@ -68,7 +68,7 @@ def es_snapshot_list():
             "total_shards": "0"
         },
         {
-            "id": "essnapshot_2020-08-05_13-32-57",
+            "id": "essnapshot_2020-08-05_11-32-57",
             "status": "SUCCESS",
             "start_epoch": "1596627177",
             "start_time": "11:32:57",
@@ -81,7 +81,7 @@ def es_snapshot_list():
             "total_shards": "0"
         },
         {
-            "id": "essnapshot_2020-08-05_13-40-40",
+            "id": "essnapshot_2020-08-05_11-40-40",
             "status": "SUCCESS",
             "start_epoch": "1596627639",
             "start_time": "11:40:39",
@@ -162,8 +162,8 @@ def test_find_delete_eligible_snapshots(es_snapshot_list):
     des = find_delete_eligible_snapshots(
         es_snapshot_list,
         '1h',
-        datetime(2020, 8, 5, 14, 25, 00))
+        datetime(2020, 8, 5, 12, 25, 00, tzinfo=timezone.utc))
     assert des == [
-        'essnapshot_2020-08-05_13-24-34',
-        'essnapshot_2020-08-05_13-24-48'
+        'essnapshot_2020-08-05_11-24-34',
+        'essnapshot_2020-08-05_11-24-48'
     ]
