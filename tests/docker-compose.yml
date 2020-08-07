@@ -1,10 +1,12 @@
 version: '3.4'
 services:
-  es01:
-    build: .
-    container_name: es01
+  es7:
+    build:
+      context: ./docker/
+      dockerfile: es7.dockerfile
+    container_name: es7
     environment:
-      - node.name=es01
+      - node.name=es7
       - cluster.name=essnapshot-es-test
       - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
@@ -17,6 +19,26 @@ services:
       - 127.0.0.1:9200:9200
     networks:
       - elastic
+  es6:
+    build:
+      context: ./docker/
+      dockerfile: es6.dockerfile
+    container_name: es6
+    environment:
+      - node.name=es6
+      - cluster.name=essnapshot-es-test
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - path.repo=/mnt/snapshot
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 127.0.0.1:9201:9200
+    networks:
+      - elastic
+
 
 networks:
   elastic:
