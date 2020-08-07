@@ -5,7 +5,7 @@ description = "Tool for Elasticsearch snapshot creation and rotation."
 authors = ["gricertg <gricertg@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.6"
 elasticsearch = "^7.8.1"
 pyyaml = "^5.3.1"
 
