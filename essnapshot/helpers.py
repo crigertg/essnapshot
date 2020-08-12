@@ -77,7 +77,7 @@ def check_snapshots_in_progress(snapshots: list):
 def find_delete_eligible_snapshots(
         snapshots: list,
         retention_time: str,
-        from_time=datetime.utcnow()):
+        from_time=datetime.now(timezone.utc)):
     delete_eligible_snapshots = []
     for snapshot in snapshots:
         snapshot_timestamp = datetime.fromtimestamp(int(snapshot['end_epoch']),
