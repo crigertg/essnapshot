@@ -3,7 +3,7 @@ from time import sleep
 from essnapshot.helpers import open_configfile, snapshot_name
 from essnapshot.helpers import check_snapshots_in_progress
 from essnapshot.helpers import find_delete_eligible_snapshots
-import es
+import essnapshot.es as es
 
 # parse the only needed command line parameter
 parser = OptionParser()
