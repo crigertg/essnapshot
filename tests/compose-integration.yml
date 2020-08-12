@@ -1,0 +1,25 @@
+version: '3.4'
+services:
+  es7:
+    build:
+      context: ./docker/
+      dockerfile: es7.dockerfile
+    container_name: es7
+    environment:
+      - node.name=es7
+      - cluster.name=essnapshot-es-test
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - path.repo=/mnt/snapshot
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 127.0.0.1:9200:9200
+    networks:
+      - elastic
+
+networks:
+  elastic:
+    driver: bridge
