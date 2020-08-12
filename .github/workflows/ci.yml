@@ -36,3 +36,34 @@ jobs:
     - name: Test with pytest
       run: |
         poetry run py.test -v
+  integration:
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8]
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - uses: Gr1N/setup-poetry@v2
+    - run: poetry --version
+    - name: check poetry config
+      run: poetry check
+    - name: Build package
+      run: |
+        python -m pip install --upgrade pip
+        poetry build
+    - name: install package
+      run: pip install dist/essnapshot-*.whl
+    - name: Start Testcontainers
+      run: docker-compose -f tests/compose-integration.yml up -d
+    - run: sleep 60
+    - name: Testrun one
+      run: essnapshot -c tests/configs/integration.yaml
+    - run: sleep 11
+    - name: Run and check for deletion
+      run: essnapshot -c tests/configs/integration.yaml | grep -q 'eligible for deletion'
