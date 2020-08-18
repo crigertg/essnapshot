@@ -3,6 +3,11 @@ name = "essnapshot"
 version = "0.1.0"
 description = "Tool for Elasticsearch snapshot creation and rotation."
 authors = ["gricertg <gricertg@gmail.com>"]
+license = "GPL-3.0-or-later"
+readme = "README.md"
+homepage = "https://github.com/gricertg/essnapshot"
+repository = "https://github.com/gricertg/essnapshot"
+
 
 [tool.poetry.dependencies]
 python = "^3.6"
