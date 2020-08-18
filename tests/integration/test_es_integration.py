@@ -6,6 +6,18 @@ from essnapshot.es import initialize_es_client
 from essnapshot.helpers import open_configfile
 from time import sleep
 
+
+@pytest.fixture
+def repo_diff_configuration():
+    return {
+            "type": "fs",
+            "settings": {
+                "location": "/mnt/snapshot",
+                "compress": "false"
+            }
+        }
+
+
 esclients = {
     'es7client': Elasticsearch("localhost:9200"),
     'es6client': Elasticsearch("localhost:9201")
@@ -58,6 +70,29 @@ def test_ensure_snapshot_repo(es_service, esclient):
         repository=es_service['repository_name'])
     assert es_service['repository_name'] in repo
     assert repo[es_service['repository_name']] == es_service['repository']
+
+
+@pytest.mark.integration_test
+@pytest.mark.parametrize('esclient',
+                         esclients.keys())
+def test_ensure_snapshot_repo_warn_configdiff(
+        es_service,
+        esclient,
+        repo_diff_configuration,
+        capsys):
+    ensure_snapshot_repo(
+        esclients[esclient],
+        es_service['repository_name'],
+        es_service['repository'])
+    ensure_snapshot_repo(
+        esclients[esclient],
+        es_service['repository_name'],
+        repo_diff_configuration
+    )
+    captured = capsys.readouterr()
+    assert captured.err == (
+        "WARNING: Snapshot repo '{r}' configuration "
+        "differs from configfile.\n").format(r=es_service['repository_name'])
 
 
 @pytest.mark.integration_test

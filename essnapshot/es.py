@@ -26,7 +26,11 @@ def ensure_snapshot_repo(
         repository_config: dict):
     """Check if snapshot repo exists, if not, create it."""
     try:
-        print(esclient.snapshot.get_repository(repository=repository_name))
+        snapshot_repo = esclient.snapshot.get_repository(
+            repository=repository_name)
+        if not snapshot_repo[repository_name] == repository_config:
+            print("WARNING: Snapshot repo '{r}' configuration differs from "
+                  "configfile.".format(r=repository_name), file=sys.stderr)
     except NotFoundError:
         print("Repository {r} not found, creating it..\
             ".format(r=repository_name))
