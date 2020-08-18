@@ -10,8 +10,8 @@ def retention_timedelta(time_string: str):
     pattern = re.compile(r"^(?P<value>\d+)(?P<unit>[a-zA-Z])?$")
     match = pattern.match(time_string)
     if not match:
-        raise ValueError("Unable to parse given time String {t}.\
-            ".format(t=time_string))
+        raise ValueError("Unable to parse given time String {t}."
+                         .format(t=time_string))
     if match.group('unit'):
         unit = match.group('unit').upper()
     else:
@@ -34,8 +34,8 @@ def open_configfile(filepath):
     try:
         Path(filepath).resolve(strict=True)
     except FileNotFoundError as e:
-        print("Unable to access configfile {f}:\
-            ".format(f=filepath), file=sys.stderr)
+        print("Unable to access configfile {f}:"
+              .format(f=filepath), file=sys.stderr)
         print(e, file=sys.stderr)
         exit(2)
 
@@ -43,8 +43,8 @@ def open_configfile(filepath):
         try:
             config = yaml.load(configfile, Loader=yaml.FullLoader)
         except (yaml.parser.ParserError, yaml.scanner.ScannerError) as e:
-            print("Unable to parse {f} as YAML:\
-                ".format(f=filepath), file=sys.stderr)
+            print("Unable to parse {f} as YAML:"
+                  .format(f=filepath), file=sys.stderr)
             print(e, file=sys.stderr)
             exit(3)
 
@@ -55,8 +55,8 @@ def open_configfile(filepath):
         ]
         for key in required_config_keys:
             if key not in config:
-                raise ValueError("Could not find required paramter {k} in {f}.\
-                    ".format(k=key, f=filepath))
+                raise ValueError("Could not find required paramter {k} in {f}."
+                                 .format(k=key, f=filepath))
         return config
 
 
@@ -86,6 +86,6 @@ def find_delete_eligible_snapshots(
         snapshot_age = from_time - snapshot_timestamp
         if snapshot_age > retention_timedelta(retention_time):
             delete_eligible_snapshots.append(snapshot['id'])
-            print("Marked snapshot {s} as eligible for deletion.\
-                ".format(s=snapshot['id']))
+            print("Marked snapshot {s} as eligible for deletion."
+                  .format(s=snapshot['id']))
     return delete_eligible_snapshots
