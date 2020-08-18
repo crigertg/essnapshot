@@ -61,7 +61,8 @@ jobs:
       run: pip install dist/essnapshot-*.whl
     - name: Start Testcontainers
       run: docker-compose -f tests/compose-integration.yml up -d
-    - run: sleep 60
+    - name: wait until ES container is up
+      run: while ! curl -s localhost:9200; do sleep 1; done
     - name: Testrun one
       run: essnapshot -c tests/configs/integration.yaml
     - run: sleep 11
