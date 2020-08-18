@@ -1,15 +1,40 @@
+"""This module contains functions for ES communication used by essnapshot."""
 import sys
 from elasticsearch import Elasticsearch, NotFoundError
 from elasticsearch import TransportError, ConnectionError
 
 
-def initialize_es_client(es_connections: list):
-    """initialize an instance of the ES client and return it."""
+def initialize_es_client(es_connections: list) -> Elasticsearch:
+    """initialize an instance of the ES client and return it.
+
+    Parameters
+    ----------
+    es_connections : list
+        the parameter is optional. It should contain hosts definitions
+        as decribed in
+        https://elasticsearch-py.readthedocs.io/en/master/api.html#elasticsearch
+
+    Returns
+    -------
+    Elasticsearch
+        An Elasticsearch instance client is returned for further usage
+    """
     return Elasticsearch(es_connections)
 
 
-def connection_check(esclient):
-    """Make sure that the connection to the ES cluster is working"""
+def connection_check(esclient: Elasticsearch) -> bool:
+    """Make sure that the connection to the ES cluster is working
+
+    Parameters
+    ----------
+    esclient : Elasticsearch
+        the client for the ES cluster which should be checked must be given
+
+    Returns
+    -------
+    bool
+        The function will return True if the ES cluster is online
+    """
     if not esclient.ping():
         print("Can't connect to ES Cluster.", file=sys.stderr)
         try:
@@ -21,10 +46,25 @@ def connection_check(esclient):
 
 
 def ensure_snapshot_repo(
-        esclient,
+        esclient: Elasticsearch,
         repository_name: str,
         repository_config: dict):
-    """Check if snapshot repo exists, if not, create it."""
+    """Check if snapshot repo exists, if not, create it.
+
+    Parameters
+    ----------
+    esclient : Elasticsearch
+        the client for the ES cluster to connect to
+    repository_name : str
+        the name of the repository to ensure
+    repository_config : dict
+        the configuration of the ES snapshot, described as body under
+        https://elasticsearch-py.readthedocs.io/en/master/api.html#elasticsearch.client.SnapshotClient.create
+
+    Returns
+    -------
+    nothing
+    """
     try:
         snapshot_repo = esclient.snapshot.get_repository(
             repository=repository_name)
@@ -45,8 +85,26 @@ def ensure_snapshot_repo(
             exit(1)
 
 
-def create_snapshot(esclient, repository_name: str, snapshot_name: str):
-    """Create a new snapshot, include the timestamp in the name."""
+def create_snapshot(
+        esclient: Elasticsearch,
+        repository_name: str,
+        snapshot_name: str) -> bool:
+    """Creates a new snapshot Elasticsearch snapshot
+
+    Parameters
+    ----------
+    esclient : Elasticsearch
+        the client for the ES cluster to connect to
+    repository_name : str
+        the name of the snapshot repository to use
+    snapshot_name : str
+        The name of the Elasticsearch snapshot
+
+    Returns
+    -------
+    bool
+        returns True if the creation of the snapshot was successful
+    """
     snapshot_return = esclient.snapshot.create(
         repository=repository_name,
         snapshot=snapshot_name)
@@ -58,14 +116,43 @@ def create_snapshot(esclient, repository_name: str, snapshot_name: str):
     return True
 
 
-def get_snapshots(esclient, repository_name: str):
-    """Get the list of all snapshots in the given repository."""
+def get_snapshots(esclient, repository_name: str) -> list:
+    """Get all snapshots in the given repository and return them as list.
+
+    Parameters
+    ----------
+    esclient : Elasticsearch
+        the client for the ES cluster to connect to
+    repository_name : str
+        the name of the snapshot repository to use
+
+    Returns
+    -------
+    list
+        a list of multiple dictionaries (one per snapshot) is returned, see
+        https://elasticsearch-py.readthedocs.io/en/master/api.html#elasticsearch.client.CatClient.snapshots
+    """
     # pylint: disable=unexpected-keyword-arg
     return esclient.cat.snapshots(repository=repository_name, format='json')
 
 
-def delete_snapshots(esclient, repository_name: str, snapshots: list):
-    """Deletes all snapshots in a list in the given repository."""
+def delete_snapshots(esclient, repository_name: str, snapshots: list) -> bool:
+    """Deletes all snapshots in a list in the given repository
+
+    Parameters
+    ----------
+    esclient : Elasticsearch
+        the client for the ES cluster to connect to
+    repository_name : str
+        the name of the snapshot repository to use
+    snapshots : list
+        a list of snapshot names to delete
+
+    Returns
+    -------
+    bool
+        returns True if the delete operation was successful
+    """
     delete_return = esclient.snapshot.delete(
         repository=repository_name,
         snapshot=snapshots)
