@@ -32,15 +32,15 @@ def ensure_snapshot_repo(
             print("WARNING: Snapshot repo '{r}' configuration differs from "
                   "configfile.".format(r=repository_name), file=sys.stderr)
     except NotFoundError:
-        print("Repository {r} not found, creating it..\
-            ".format(r=repository_name))
+        print("Repository {r} not found, creating it.."
+              .format(r=repository_name))
         try:
             esclient.snapshot.create_repository(
                 repository=repository_name,
                 body=repository_config)
         except TransportError as e:
-            print("Error when trying to create the snapshot repository '{r}':\
-                ".format(r=repository_name), file=sys.stderr)
+            print("Error when trying to create the snapshot repository '{r}':"
+                  .format(r=repository_name), file=sys.stderr)
             print(e, file=sys.stderr)
             exit(1)
 
@@ -51,8 +51,8 @@ def create_snapshot(esclient, repository_name: str, snapshot_name: str):
         repository=repository_name,
         snapshot=snapshot_name)
     if not ('accepted' in snapshot_return and snapshot_return['accepted']):
-        raise Exception("Snapshot {n} could not be created.\
-            ".format(n=snapshot_name))
+        raise Exception("Snapshot {n} could not be created."
+                        .format(n=snapshot_name))
 
     print("Successfully created snapshot {s}".format(s=snapshot_name))
     return True
