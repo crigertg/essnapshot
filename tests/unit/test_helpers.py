@@ -1,7 +1,7 @@
-from essnapshot.helpers import time_in_seconds, open_configfile
+from essnapshot.helpers import retention_timedelta, open_configfile
 from essnapshot.helpers import snapshot_name, check_snapshots_in_progress
 from essnapshot.helpers import find_delete_eligible_snapshots
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import pytest
 import re
 
@@ -97,29 +97,29 @@ def es_snapshot_list():
 
 
 @pytest.mark.parametrize("convert_time, expected_result", [
-    ("60", 60),
-    ("1s", 1),
-    ("1m", 60),
-    ("1h", 3600),
-    ("1d", 86400)
+    ("60", timedelta(seconds=60)),
+    ("1s", timedelta(seconds=1)),
+    ("1m", timedelta(minutes=1)),
+    ("1h", timedelta(hours=1)),
+    ("1d", timedelta(days=1))
 ])
-def test_time_in_seconds(convert_time, expected_result):
-    assert time_in_seconds(convert_time) == expected_result
+def test_retention_timedelta(convert_time, expected_result):
+    assert retention_timedelta(convert_time) == expected_result
 
 
-def test_time_in_seconds_exception_invalid_time_string():
+def test_retention_timedelta_exception_invalid_time_string():
     with pytest.raises(ValueError):
-        assert time_in_seconds('1-D')
+        assert retention_timedelta('1-D')
 
 
-def test_time_in_seconds_exception_unkown_unit():
+def test_retention_timedelta_exception_unkown_unit():
     with pytest.raises(ValueError):
-        assert time_in_seconds('1Z')
+        assert retention_timedelta('1Z')
 
 
-def test_time_in_seconds_exception_if_integer_is_given():
+def test_retention_timedelta_exception_if_integer_is_given():
     with pytest.raises(TypeError):
-        assert time_in_seconds(1)
+        assert retention_timedelta(1)
 
 
 def test_open_configfile_success():
