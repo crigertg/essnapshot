@@ -38,7 +38,7 @@ def is_responsive():
 def es_service(docker_ip, docker_services):
     """Ensure that ES services is up and responsive."""
     docker_services.wait_until_responsive(
-        timeout=60.0, pause=1.0, check=lambda: is_responsive()
+        timeout=90.0, pause=1.0, check=lambda: is_responsive()
     )
     return open_configfile('tests/configs/integration.yaml')
 
