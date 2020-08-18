@@ -2,11 +2,11 @@ import sys
 import re
 import yaml
 from pathlib import Path
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 
-def time_in_seconds(time_string: str):
-    """Converts times given as string in the form <Value><Unit> to seconds"""
+def retention_timedelta(time_string: str):
+    """Retruns the given retention time from String as timedelta object"""
     pattern = re.compile(r"^(?P<value>\d+)(?P<unit>[a-zA-Z])?$")
     match = pattern.match(time_string)
     if not match:
@@ -16,14 +16,15 @@ def time_in_seconds(time_string: str):
         unit = match.group('unit').upper()
     else:
         unit = 'S'
-    multiplier = {
-        'S': 1,
-        'M': 60,
-        'H': 3600,
-        'D': 86400,
+    time_value = int(match.group('value'))
+    timedelta_args = {
+        'S': {'seconds': time_value},
+        'M': {'minutes': time_value},
+        'H': {'hours': time_value},
+        'D': {'days': time_value},
     }
-    if unit in multiplier:
-        return int(match.group('value')) * multiplier[unit]
+    if unit in timedelta_args:
+        return timedelta(**timedelta_args[unit])
     else:
         raise ValueError("Unsupported time unit {u}".format(u=unit))
 
@@ -82,8 +83,8 @@ def find_delete_eligible_snapshots(
     for snapshot in snapshots:
         snapshot_timestamp = datetime.fromtimestamp(int(snapshot['end_epoch']),
                                                     tz=timezone.utc)
-        snapshot_age_seconds = (from_time - snapshot_timestamp).total_seconds()
-        if int(snapshot_age_seconds) > time_in_seconds(retention_time):
+        snapshot_age = from_time - snapshot_timestamp
+        if snapshot_age > retention_timedelta(retention_time):
             delete_eligible_snapshots.append(snapshot['id'])
             print("Marked snapshot {s} as eligible for deletion.\
                 ".format(s=snapshot['id']))
