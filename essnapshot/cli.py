@@ -18,7 +18,9 @@ def main():
     # parse the only needed command line parameter
     parser = OptionParser()
     parser.add_option("-c", "--config", dest="configfile",
-                      help="Path to configuration file",
+                      help="Path to configuration file. "
+                      "See example and documentation at "
+                      "https://github.com/gricertg/essnapshot",
                       metavar="FILE")
     options = parser.parse_args()[0]
 
