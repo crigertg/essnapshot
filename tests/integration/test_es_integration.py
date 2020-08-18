@@ -4,7 +4,7 @@ from essnapshot.es import connection_check, ensure_snapshot_repo
 from essnapshot.es import create_snapshot, get_snapshots, delete_snapshots
 from essnapshot.es import initialize_es_client
 from essnapshot.helpers import open_configfile
-from time import sleep
+from essnapshot.cli import wait_for_running_snapshots
 
 
 @pytest.fixture
@@ -125,10 +125,11 @@ def test_get_snapshots(es_service, esclient):
 @pytest.mark.parametrize('esclient',
                          esclients.keys())
 def test_delete_snapshots(es_service, esclient):
-    assert esclients[esclient].snapshot.create(
+    esclients[esclient].snapshot.create(
         repository=es_service['repository_name'],
         snapshot='integration_delete')
-    sleep(1)
+    wait_for_running_snapshots(esclients[esclient],
+                               es_service['repository_name'])
     assert delete_snapshots(
         esclients[esclient],
         es_service['repository_name'],
