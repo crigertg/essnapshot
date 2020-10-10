@@ -2,7 +2,7 @@
 name = "essnapshot"
 version = "0.1.0"
 description = "Tool for Elasticsearch snapshot creation and rotation."
-authors = ["gricertg <gricertg@gmail.com>"]
+authors = ["gricertg <gricertg@posteo.de>"]
 license = "GPL-3.0-or-later"
 readme = "README.md"
 homepage = "https://github.com/gricertg/essnapshot"
